@@ -1,14 +1,12 @@
 <p align="center">
   <a href="https://github.com/homebridge/homebridge">
-    <img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150" />
+    <img src="https://avatars.githubusercontent.com/u/38217527?s=200&v=4" width="150" />
   </a>
 </p>
 
-# Homebridge HTTP Door
+# Homebridge HTTP Various Door
 
-> This is a work in progress.
-
-[WIP] A simple homebridge plugin for controlling (stateless) doors via HTTP requests.
+> Simple usage.
 
 ## Configuration sample
 
@@ -30,3 +28,5 @@
     ]
 }
 ```
+
+> Thanks to `eymengunay`
