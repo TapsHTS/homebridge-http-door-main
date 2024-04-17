@@ -1,0 +1,30 @@
+{
+    "displayName": "Homebridge HTTP Various Door",
+    "name": "@eymengunay/homebridge-http-various-door",
+    "version": "1.0.0",
+    "description": "A simple homebridge plugin for controlling (stateless) numerous type of doors via HTTP requests.",
+    "main": "index.js",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/TapsHTS/homebridge-http-various-door.git"
+    },
+    "bugs": {
+        "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "homebridge-plugin"
+    ],
+    "author": "Eymen Gunay <eymen@egunay.com>",
+    "license": "ISC",
+    "engines": {
+        "homebridge": ">=0.4.50",
+        "node": ">=12.13.0"
+    },
+    "dependencies": {
+        "axios": "^0.25.0"
+    }
+}
