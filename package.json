@@ -10,7 +10,7 @@
         "url": "git+https://github.com/TapsHTS/homebridge-http-various-door.git"
     },
     "bugs": {
-        "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+        "url": "https://github.com/TapsHTS/homebridge-http-various-door/issues"
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,7 +18,7 @@
     "keywords": [
         "homebridge-plugin"
     ],
-    "author": "Eymen Gunay <eymen@egunay.com>",
+    "author": "TapsHTS",
     "license": "ISC",
     "engines": {
         "homebridge": ">=0.4.50",
