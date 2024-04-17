@@ -46,6 +46,8 @@ class HTTPDoor {
         } else if (this.config.type === 'blinds') {
             this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(currentState)
             this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(targetState === null ? currentState : targetState)
+        } else {
+            throw new Error('Invalid door type given')
         }
     }
     handleSetState(value, callback) {
@@ -66,22 +68,50 @@ class HTTPDoor {
                 callback(err)
             })
         } else if (this.config.type === 'blinds') {
-            this.updateState(value)
+            let targetState;
+            if (value >= 55 && value <= 100) {
+                targetState = 0; // Close
+            } else if (value >= 0 && value <= 45) {
+                targetState = 100; // Open
+            } else if (value > 45 && value < 55) {
+                targetState = 50; // Pause
+                return axios({
+                    method: this.config.method,
+                    url: this.config.pauseUrl
+                }).then(() => {
+                    this.log.debug('Pausing accessory')
+                    this.updateState(value, targetState)
+                    this.autoLock()
+                    callback()
+                }).catch(err => {
+                    this.log.warn('HTTP request failed', err.message)
+                    this.updateState(new Error('HTTP request failed'))
+                    this.autoLock()
+                    callback(err)
+                })
+            } else {
+                this.log.warn('Invalid value for blinds');
+                callback(new Error('Invalid value for blinds'));
+                return;
+            }
+
+            this.updateState(value, targetState);
             return axios({
                 method: this.config.method,
                 url: this.config.url
             }).then(() => {
-                this.log.debug('Setting accessory state to', value)
-                this.autoLock()
-                callback()
+                this.log.debug('Setting accessory state to', value);
+                this.autoLock();
+                callback();
             }).catch(err => {
-                this.log.warn('HTTP request failed', err.message)
-                this.updateState(new Error('HTTP request failed'))
-                this.autoLock()
-                callback(err)
-            })
+                this.log.warn('HTTP request failed', err.message);
+                this.updateState(new Error('HTTP request failed'));
+                this.autoLock();
+                callback(err);
+            });
         }
     }
+
     getServices() {
         // initialize information service
         this.informationService = new this.Service.AccessoryInformation()
