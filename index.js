@@ -6,7 +6,7 @@ class HTTPDoor {
         this.Characteristic = api.hap.Characteristic
 
         // valid types
-        this.types = ['lock', 'garage', 'blinds']
+        this.types = ['lock', 'garage']
 
         // config defaults
         const defaults = {
@@ -23,8 +23,6 @@ class HTTPDoor {
             this.service = new this.Service.LockMechanism(this.config.name)
         } else if (this.config.type === 'garage') {
             this.service = new this.Service.GarageDoorOpener(this.config.name)
-        } else if (this.config.type === 'blinds') {
-            this.service = new this.Service.WindowCovering(this.config.name)
         } else {
             throw new Error('Invalid door type given')
         }
@@ -43,75 +41,25 @@ class HTTPDoor {
         } else if (this.config.type === 'garage') {
             this.service.getCharacteristic(this.Characteristic.CurrentDoorState).updateValue(currentState)
             this.service.getCharacteristic(this.Characteristic.TargetDoorState).updateValue(targetState === null ? currentState : targetState)
-        } else if (this.config.type === 'blinds') {
-            this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(currentState)
-            this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(targetState === null ? currentState : targetState)
-        } else {
-            throw new Error('Invalid door type given')
         }
     }
     handleSetState(value, callback) {
-        if (this.config.type === 'garage') {
-            this.updateState(2, 0)
-            return axios({
-                method: this.config.method,
-                url: this.config.url
-            }).then(() => {
-                this.log.debug('Unlocking accessory')
-                this.updateState(0)
-                this.autoLock()
-                callback()
-            }).catch(err => {
-                this.log.warn('HTTP request failed', err.message)
-                this.updateState(new Error('HTTP request failed'))
-                this.autoLock()
-                callback(err)
-            })
-        } else if (this.config.type === 'blinds') {
-            let targetState;
-            if (value >= 55 && value <= 100) {
-                targetState = 0; // Close
-            } else if (value >= 0 && value <= 45) {
-                targetState = 100; // Open
-            } else if (value > 45 && value < 55) {
-                targetState = 50; // Pause
-                return axios({
-                    method: this.config.method,
-                    url: this.config.pauseUrl
-                }).then(() => {
-                    this.log.debug('Pausing accessory')
-                    this.updateState(value, targetState)
-                    this.autoLock()
-                    callback()
-                }).catch(err => {
-                    this.log.warn('HTTP request failed', err.message)
-                    this.updateState(new Error('HTTP request failed'))
-                    this.autoLock()
-                    callback(err)
-                })
-            } else {
-                this.log.warn('Invalid value for blinds');
-                callback(new Error('Invalid value for blinds'));
-                return;
-            }
-
-            this.updateState(value, targetState);
-            return axios({
-                method: this.config.method,
-                url: this.config.url
-            }).then(() => {
-                this.log.debug('Setting accessory state to', value);
-                this.autoLock();
-                callback();
-            }).catch(err => {
-                this.log.warn('HTTP request failed', err.message);
-                this.updateState(new Error('HTTP request failed'));
-                this.autoLock();
-                callback(err);
-            });
-        }
+        if (this.config.type === 'garage') this.updateState(2, 0)
+        return axios({
+            method: this.config.method,
+            url: this.config.url
+        }).then(() => {
+            this.log.debug('Unlocking accessory')
+            this.updateState(0)
+            this.autoLock()
+            callback()
+        }).catch(err => {
+            this.log.warn('HTTP request failed', err.message)
+            this.updateState(new Error('HTTP request failed'))
+            this.autoLock()
+            callback(err)
+        })
     }
-
     getServices() {
         // initialize information service
         this.informationService = new this.Service.AccessoryInformation()
@@ -122,8 +70,6 @@ class HTTPDoor {
             characteristic = this.Characteristic.LockTargetState
         } else if (this.config.type === 'garage') {
             characteristic = this.Characteristic.TargetDoorState
-        } else if (this.config.type === 'blinds') {
-            characteristic = this.Characteristic.TargetPosition
         } else {
             throw new Error('Invalid door type given')
         }
@@ -141,5 +87,5 @@ class HTTPDoor {
 }
 
 export default function(homebridge) {
-    homebridge.registerAccessory('@tapshts/homebridge-http-door', 'HTTPDoor', HTTPDoor)
+    homebridge.registerAccessory('@eymengunay/homebridge-http-door', 'HTTPDoor', HTTPDoor)
 }

@@ -1,7 +1,7 @@
 {
     "displayName": "Homebridge HTTP Various Door",
     "name": "@tapshts/homebridge-http-various-door",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "A simple homebridge plugin for controlling (stateless) numerous type of doors via HTTP requests.",
     "main": "index.js",
     "type": "module",
